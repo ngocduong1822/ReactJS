@@ -23,8 +23,32 @@ const deleteUserApi = (_id) => {
     const URL_BACKEND = `/api/v1/user/${_id}`;
     return axios.delete(URL_BACKEND);
 }   
-const fetchAllUserApi = () => {
-    const URL_BACKEND = "/api/v1/user";
+
+const handleUploadFile = (file,folder) => {
+    const URL_BACKEND = `/api/v1/upload`;
+    let config = {
+        headers: {
+            "upload-type": "folder",
+            "content-type": "multipart/form-data",
+        }
+    }
+    const bodyFormData = new FormData();
+    bodyFormData.append("fileImg", file);
+    return axios.post(URL_BACKEND, bodyFormData, config);
+};
+
+const updateUserAvaterAPI = ( avatar,_id,fullName, phone) => {
+    const URL_BACKEND = `/api/v1/user`
+    const data = {
+            _id:_id,
+            avatar:avatar,
+            fullName:fullName,
+            phone:phone
+           }
+    return axios.put(URL_BACKEND, data);
+};
+const fetchAllUserApi = (current, pageSize) => {
+    const URL_BACKEND = `/api/v1/user?current=${current}&pageSize=${pageSize}`;
     return axios.get(URL_BACKEND);
 };
-export { createUserApi, updateUserApi, fetchAllUserApi,deleteUserApi };
+export { createUserApi, updateUserApi, fetchAllUserApi,deleteUserApi, handleUploadFile, updateUserAvaterAPI};

@@ -1,12 +1,12 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Table, Popconfirm, notification } from "antd";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ViewUserDetail from "./view.user.detail";
 import UpDateUserModal from "./update.user.modal";
 import { deleteUserApi } from "../../services/api.service";
 
 const UserTable = (props) => {
-  const { dataUsers, loadUser } = props;
+  const { dataUsers, loadUser , current, pageSize, total, setCurrent, setPageSize } = props;
 
   // 🔥 state drawer
   const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -44,6 +44,10 @@ const UserTable = (props) => {
 
   const columns = [
     {
+      title: "STT",
+      render: (_, record, index) => <span>{index + 1}</span>,
+    },
+    {
       title: "Id",
       dataIndex: "_id",
       render: (_, record) => (
@@ -71,7 +75,6 @@ const UserTable = (props) => {
       key: "action",
       render: (_, record) => (
         <div style={{ display: "flex", gap: "10px" }}>
-          
           {/* EDIT */}
           <EditOutlined
             onClick={() => {
@@ -92,12 +95,18 @@ const UserTable = (props) => {
           >
             <DeleteOutlined style={{ cursor: "pointer", color: "red" }} />
           </Popconfirm>
-
         </div>
       ),
     },
   ];
 
+  // ✅ Hàm xử lý thay đổi phân trang
+  const handlePaginationChange = (page, pageSize) => {
+    console.log("Page:", page, "PageSize:", pageSize);
+    setCurrent(page);
+    setPageSize(pageSize);
+  }
+  
   return (
     <>
       {/* TABLE */}
@@ -105,6 +114,22 @@ const UserTable = (props) => {
         columns={columns}
         dataSource={dataUsers}
         rowKey="_id"
+        pagination={{
+          current: current,
+          pageSize: pageSize,
+          showSizeChanger: true,
+          total: total,
+          pageSizeOptions: [6, 10, 20, 50],
+          showTotal: (total, range) => {
+            return (
+              <div>
+                {" "}
+                {range[0]}-{range[1]} trên {total} rows
+              </div>
+            );
+          },
+          onChange: handlePaginationChange
+        }}
       />
 
       {/* UPDATE MODAL */}
@@ -122,6 +147,7 @@ const UserTable = (props) => {
         setDataDetail={setDataDetail}
         isDetailOpen={isDetailOpen}
         setIsDetailOpen={setIsDetailOpen}
+        loadUser={loadUser}
       />
     </>
   );
