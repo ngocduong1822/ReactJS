@@ -1,54 +1,76 @@
-import { Link, NavLink } from "react-router-dom";
-// import './header.css'
-import {
-  AlibabaOutlined,
-  AliwangwangOutlined,
-  AppstoreOutlined,
-  AuditOutlined,
-  HomeOutlined,
-  MailOutlined,
-  SettingOutlined,
-  UsergroupAddOutlined,
-} from "@ant-design/icons";
-import { Menu } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import { HomeOutlined, UsergroupAddOutlined, AuditOutlined, AliwangwangOutlined } from "@ant-design/icons";
+import { Menu, message } from "antd";
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/auth.context";
-const Header = () => {
-  const [current, setCurrent] = useState("mail");
+import { logoutApi } from "../../services/api.service";
 
-  const { user } = useContext(AuthContext);
+const Header = () => {
+  const [current, setCurrent] = useState("home");
+  const navigate = useNavigate();
+  const { user, setUser } = useContext(AuthContext);
 
   const onClick = (e) => {
     setCurrent(e.key);
   };
+
+  const handleLogout = async () => {
+    try {
+      const res = await logoutApi();
+
+      if (res?.data) {
+        localStorage.removeItem("access_token");
+
+        setUser({
+          email: "",
+          fullName: "",
+          phone: "",
+          avatar: "",
+          role: "",
+          id: "",
+        });
+
+        message.success("Logout successfully");
+        navigate("/");
+      }
+    } catch (error) {
+      console.log("Logout error:", error);
+    }
+  };
+
   const items = [
     {
-      label: <Link to={"/"}>Home</Link>,
+      label: <Link to="/">Home</Link>,
       key: "home",
       icon: <HomeOutlined />,
     },
     {
-      label: <Link to={"/users"}>Users</Link>,
+      label: <Link to="/users">Users</Link>,
       key: "users",
       icon: <UsergroupAddOutlined />,
     },
     {
-      label: <Link to={"/books"}>Books</Link>,
+      label: <Link to="/books">Books</Link>,
       key: "books",
       icon: <AuditOutlined />,
     },
     {
-      label: 'Welcome, ' + (user?.fullName || "Guest"),
+      label: `Welcome, ${user?.fullName || "Guest"}`,
       key: "setting",
       icon: <AliwangwangOutlined />,
       children: [
         {
-          label: <Link to={user?.email ? "/" : "/login"}>{user?.email ? "Đăng xuất" : "Đăng nhập"}</Link>,
+          label: user?.email ? (
+            <span onClick={handleLogout}>Đăng xuất</span>
+          ) : (
+            <Link to="/login">Đăng nhập</Link>
+          ),
           key: user?.email ? "logout" : "login",
         },
       ],
-    }
+    },
   ];
+
   return (
     <Menu
       onClick={onClick}
@@ -58,4 +80,5 @@ const Header = () => {
     />
   );
 };
+
 export default Header;
