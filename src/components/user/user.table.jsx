@@ -102,7 +102,6 @@ const UserTable = (props) => {
 
   // ✅ Hàm xử lý thay đổi phân trang
   const handlePaginationChange = (page, pageSize) => {
-    console.log("Page:", page, "PageSize:", pageSize);
     setCurrent(page);
     setPageSize(pageSize);
   }

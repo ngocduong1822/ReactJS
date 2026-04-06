@@ -6,15 +6,15 @@ import {
   notification,
   Row,
   Col,
+  Divider
 } from "antd";
 import { registerUserApi } from "../services/api.service";
-import { useNavigate } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const onFinish = async (values) => {
-    console.log(values);
     const res = await registerUserApi(
       values.fullName,
       values.email,
@@ -36,7 +36,8 @@ const RegisterPage = () => {
   };
 
   return (
-    <Form form={form} layout="vertical" onFinish={onFinish}>
+    <Form form={form} layout="vertical" onFinish={onFinish} style={{ margin: "30px" }}>
+      <h3 style={{ textAlign:"center" }}><b>Đăng ký tài khoản</b></h3>
       <div style={{ margin: "50px" }}></div>
       <Row justify="center">
         <Col xs={24} md={8} >
@@ -91,16 +92,17 @@ const RegisterPage = () => {
       <Row justify="center">
         <Col xs={24} md={8} >
 
-        <button
+        <Button
           onClick={() => {
             form.submit();
           }}
           type="submit"
           className="btn btn-primary"
-          style={{ backgroundColor: "#1890ff", color: "white", border: "none", padding: "10px 20px", borderRadius: "5px", cursor: "pointer" }}
         >
           Register
-        </button>
+        </Button>
+        <Divider />
+        <div>Đã có tài khoản? <Link to="/login"> Đăng nhập tại đây</Link></div>
           </Col>
       </Row>
     </Form>

@@ -15,7 +15,7 @@ const UserPage = () => {
       
    const loadUser = async() => {
       const res = await fetchAllUserApi(current, pageSize);
-      console.log("API Response:", res.data);
+      
       if(res.data){
         setDataUsers(res.data.result);
         setTotal(res.data.meta.total);  // ✅ Lấy total từ meta
